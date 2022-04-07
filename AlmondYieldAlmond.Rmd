@@ -1,0 +1,15 @@
+---
+title: "Group I: Almond Yield Model"
+author: "Paloma Cartwright, Julia Parish, Quin Smith"
+date: "2022/04/12"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r}
+library(tidyverse)
+```
+
