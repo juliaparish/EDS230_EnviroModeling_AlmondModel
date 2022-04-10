@@ -11,5 +11,19 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r}
 library(tidyverse)
+library(here)
+library(janitor)
 ```
+
+```{r}
+#read in the data
+clim <- read.table(here("data/clim.txt"), header = TRUE) %>% 
+  clean_names()
+
+#source function(s): 
+#almond_model()
+source(here("R/almond_model.R"))
+```
+
+
 
