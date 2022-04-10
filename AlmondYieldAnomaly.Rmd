@@ -30,11 +30,12 @@ source(here("R/almond_model.R"))
 clim_avg <- clim %>% 
   group_by(month, year) %>% 
   filter(month == 1 | month == 2) %>% 
-  summarise_at(vars(tmax_c, tmin_c, precip), funs(mean(.)))
+  summarise_at(vars(tmin_c, precip), funs(mean(.)))
 ```
 
 ```{r}
 #run almond_model() on clim data
-
+almond_yield <- clim_avg %>% 
+  
 ```
 
