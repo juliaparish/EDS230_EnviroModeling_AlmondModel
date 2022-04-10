@@ -28,14 +28,40 @@ source(here("R/almond_model.R"))
 ```{r}
 #subset the clim data for monthly averages
 clim_avg <- clim %>% 
-  group_by(month, year) %>% 
-  filter(month == 1 | month == 2) %>% 
-  summarise_at(vars(tmin_c, precip), funs(mean(.)))
+  group_by(year, month) %>% 
+  summarize(mean_temp = mean(tmin_c), 
+            tot_precip = sum(precip)) %>% 
+  filter(month %in% c(1, 2))
+
+Tn2 <- clim_avg %>% 
+  group_by(year) %>% 
+  mutate(Tn2 = case_when(month == 2 ~ mean_temp)) %>% 
+  select(year, Tn2) %>% 
+  drop_na()
+
+P1 <- clim_avg %>% 
+  group_by(year) %>% 
+  mutate(P1 = case_when(month == 1 ~ tot_precip)) %>% 
+  select(year, P1) %>% 
+  drop_na
+
+func_vars <- cbind(Tn2, P1 = P1$P1)
 ```
 
 ```{r}
 #run almond_model() on clim data
-almond_yield <- clim_avg %>% 
+almond_yield_anmly <- func_vars %>% 
+  mutate(yield_anmly = almond_model(Tn2 = Tn2, P1 = P1))
   
+```
+
+```{r}
+#plot data
+anmly_plot <- ggplot(data = almond_yield_anmly, aes(x = year, y = yield_anmly)) +
+  geom_point() +
+  geom_line() +
+  theme_minimal()
+
+anmly_plot
 ```
 
