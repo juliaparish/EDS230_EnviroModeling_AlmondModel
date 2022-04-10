@@ -13,13 +13,14 @@
 #'
 #' @examples
 
-almond_model <- function(mon_temp_min, mon_precip, temp_coeff1, temp_coeff2,
-                         precip_coeff1, precip_coeff2, constant){
-
-  yield_anomaly <- (mon_temp_min * temp_coeff1) +
-    (mon_temp_min^2 * temp_coeff2) +
-    (mon_precip * precip_coeff1) +
-    (mon_precip^2 * precip_coeff2) +
+almond_model <- function(Tn2, Tn2_coeff1 = -0.015, Tn2_coeff2 = -0.0046,
+                         P1, P1_coeff1 = -0.07, P1_coeff2 = 0.0043, 
+                         constant = 0.28)
+  {
+  yield_anomaly <- (Tn2 * Tn2_coeff1) +
+    (Tn2^2 * Tn2_coeff2) +
+    (P1 * P1_coeff1) +
+    (P1^2 * P1_coeff2) +
     constant
   
   return(yield_anomaly)
