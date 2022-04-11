@@ -16,9 +16,10 @@ library(janitor)
 ```
 # Almond Yield Function
 
-This environmental model was completed as an assignment for the course, Environmental Data Science 230 | Environmental Science & Management: Modeling Environmental Systems. The goal of this assignment was to build a model of almond yield in California between the years 1989 and 2010. The source data and model design is based on research published in the paper, Lobell et al. 2006. Impacts of future climate change on California perennial crop yields: Model projections with climate and crop uncertainties. 
+This environmental model was completed as an assignment for the course, Environmental Data Science 230 | Environmental Science & Management: Modeling Environmental Systems. The goal of this assignment was to build a model of almond yield in California between the years 1989 and 2010. The source data and model design is based on research published in the paper, Impacts of future climate change on California perennial crop yields: Model projections with climate and crop uncertainties (Lobell 2006). 
 
 ## Data and Source Function
+
 ```{r}
 #read in the data
 clim <- read.table(here("data/clim.txt"), header = TRUE) %>% 
@@ -70,6 +71,7 @@ almond_yield_anmly <- func_vars %>%
 
 ### Check Answers
 ```{r, message=FALSE}
+# check values with those provided in the assignment for years 2000, 2001, 2002
 ya2000 <- almond_yield_anmly %>% 
   filter(year == 2000) %>% 
   select(yield_anmly)
@@ -118,9 +120,11 @@ anmly_plot <- ggplot(data = almond_yield_anmly,
             size = 3, color = "slategrey") +
   geom_text(aes(x = 2005, y = 750, label = "656.37"), stat = "unique", 
             size = 3, color = "slategrey") +
+  geom_text(aes(x = 2008, y = 750, label = "576.28"), stat = "unique", 
+            size = 3, color = "slategrey") +
   labs(title = "California Almond Yield Anomaly",
        subtitle = "1989 - 2010",
-       caption = "Data source: Lobell, D.B., et al. 2006",
+       caption = "Data source: Lobell et al. 2006",
        tag = "Figure 1:",
        x = "Year",
        y = expression(paste("Yield Anomaly ton acre"^-1))) +
@@ -139,10 +143,15 @@ anmly_plot
 
 ## Summarize Results
 
-This analysis explored changes in almond crop yield anomaly from 1989 to 2010 as a function of monthly precipitation and average minimum temperature. The minimum yield anomaly from 1989 to 2010 was `r round(yield_min, 2)` which occurred in 1989. The maximum almond yield anomaly was `r round(yield_max,2)`, which occurred in 1995. The average yield anomaly from 1989 to 2010 was `r round(avg_yield, 2)`. The differences in precipitation had a positive influence on the yield anomaly as the years with higher precipitation had higher yield anomalies. The large spike in yield anomaly in 1995 could possibly be due to the increased precipitation caused by the 1994 - 1995 El Niño. There was not an overall increasing or decreasing trend seen in the yield anomaly from 1989 to 2010. 
+This analysis explored changes in almond crop yield anomaly from 1989 to 2010 as a function of monthly precipitation and average minimum temperature. The minimum yield anomaly from 1989 to 2010 was `r round(yield_min, 2)`, which occurred in 1989. The maximum almond yield anomaly was `r round(yield_max,2)`, which occurred in 1995. The average yield anomaly from 1989 to 2010 was `r round(avg_yield, 2)`. The differences in precipitation had a positive influence on the yield anomaly as the years with higher precipitation had higher yield anomalies. The large spike in yield anomaly in 1995 could possibly be due to the increased precipitation caused by the 1994 - 1995 El Niño (Muis 2018). Years preceding high crop yield anomalies saw a significant decrease in yields. One factor that may influence this phenomenon is that almonds are alternate bearing, meaning that after a year of high fruit productivity, the following year a tree will have a significantly reduced fruit yield (Boriss 2005). There was not an overall increasing or decreasing trend seen in the yield anomaly from 1989 to 2010. 
 
 ## Reference
 
+Boriss H., Brunke H. (2005). Commodity Profile: Almonds. California, CA: University of California. https://aic.ucdavis.edu/profiles/Almonds-2005.pdf. Last accessed: 2022/04/11
+
 Lobell, D., Field, C., Nicholas, K., & Bonfils, C. (2006). Impacts of future climate change on California perennial crop yields: Model projections with climate and crop uncertainties. Agricultural and Forest Meteorology, 141, 208–218. https://doi.org/10.1016/j.agrformet.2006.10.006
+
+Muis, S., Haigh, I. D., Guimarães Nobre, G., Aerts, J. C. J. H., & Ward, P. J. (2018). Influence of El Niño-Southern Oscillation on Global Coastal Flooding. Earth’s Future, 6(9), 1311–1322. https://doi.org/10.1029/2018EF000909
+
 
 
