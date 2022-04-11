@@ -1,4 +1,4 @@
-# EDS230 Environemtnal Modeling - Almond Yield Model
+# EDS230 Environmental Modeling - Almond Yield Model
 
 ## Almond Yield as a Function
 
