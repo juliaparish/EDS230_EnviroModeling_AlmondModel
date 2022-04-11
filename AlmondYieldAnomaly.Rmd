@@ -6,7 +6,7 @@ output: pdf_document
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
+knitr::opts_chunk$set(echo = TRUE, message=FALSE)
 ```
 
 ```{r}
@@ -14,7 +14,11 @@ library(tidyverse)
 library(here)
 library(janitor)
 ```
+# Almond Yield Function
 
+This environmental model was completed as an assignment for the course, Environmental Data Science 230 | Environmental Science & Management: Modeling Environmental Systems. The goal of this assignment was to build a model of almond yield in California between the years 1989 and 2010. The source data and model design is based on research published in the paper, Lobell et al. 2006. Impacts of future climate change on California perennial crop yields: Model projections with climate and crop uncertainties. 
+
+## Data and Source Function
 ```{r}
 #read in the data
 clim <- read.table(here("data/clim.txt"), header = TRUE) %>% 
@@ -25,6 +29,8 @@ clim <- read.table(here("data/clim.txt"), header = TRUE) %>%
 source(here("R/almond_model.R"))
 ```
 
+## Subset the data
+
 ```{r}
 #subset the clim data for monthly averages
 clim_avg <- clim %>% 
@@ -33,35 +39,110 @@ clim_avg <- clim %>%
             tot_precip = sum(precip)) %>% 
   filter(month %in% c(1, 2))
 
+# create a variable for avg. February temp. data
 Tn2 <- clim_avg %>% 
   group_by(year) %>% 
   mutate(Tn2 = case_when(month == 2 ~ mean_temp)) %>% 
   select(year, Tn2) %>% 
   drop_na()
+```
 
+\newpage
+```{r}
+# create a variable for avg. January precipitation data
 P1 <- clim_avg %>% 
   group_by(year) %>% 
   mutate(P1 = case_when(month == 1 ~ tot_precip)) %>% 
   select(year, P1) %>% 
   drop_na
 
+# create a variable combined temp and precip data
 func_vars <- cbind(Tn2, P1 = P1$P1)
 ```
 
+## Run Model 
 ```{r}
-#run almond_model() on clim data
+#run almond_model() on subsetted clim data
 almond_yield_anmly <- func_vars %>% 
   mutate(yield_anmly = almond_model(Tn2 = Tn2, P1 = P1))
   
 ```
 
+### Check Answers
+```{r, message=FALSE}
+ya2000 <- almond_yield_anmly %>% 
+  filter(year == 2000) %>% 
+  select(yield_anmly)
+
+print(paste("In 2000, the almond yield anomaly was", 
+            round(ya2000$yield_anmly, 3), "tons acre-1"))
+
+ya2001 <- almond_yield_anmly %>% 
+  filter(year == 2001) %>% 
+  select(yield_anmly)
+
+print(paste("In 2001, the almond yield anomaly was", 
+            round(ya2001$yield_anmly, 2), "tons acre-1"))
+
+ya2002 <- almond_yield_anmly %>% 
+  filter(year == 2002) %>% 
+  select(yield_anmly)
+
+print(paste("In 2002, the almond yield anomaly was", 
+            round(ya2002$yield_anmly, 2), "tons acre-1"))
+```
+
+
+```{r}
+# create statistical variables
+yield_min <- min(almond_yield_anmly$yield_anmly)
+yield_max <- max(almond_yield_anmly$yield_anmly)
+avg_yield <- mean(almond_yield_anmly$yield_anmly)
+```
+
+\newpage
+## Visualize Results
+
 ```{r}
 #plot data
-anmly_plot <- ggplot(data = almond_yield_anmly, aes(x = year, y = yield_anmly)) +
-  geom_point() +
-  geom_line() +
-  theme_minimal()
+
+anmly_plot <- ggplot(data = almond_yield_anmly, 
+                     aes(x = year, y = yield_anmly)) +
+  geom_line(color = "#E1BE6A") +
+  geom_point(color = "#40B0A6") +
+  geom_text(aes(x = 1995, y = 2003, label = "1919.98"), stat = "unique", 
+            size = 3, color = "slategrey") + 
+  geom_text(aes(x = 1997, y = 450, label = "329.69"), stat = "unique", 
+            size = 3, color = "slategrey") +
+  geom_text(aes(x = 2001, y = 250, label = "159.51"), stat = "unique", 
+            size = 3, color = "slategrey") +
+  geom_text(aes(x = 2005, y = 750, label = "656.37"), stat = "unique", 
+            size = 3, color = "slategrey") +
+  labs(title = "California Almond Yield Anomaly",
+       subtitle = "1989 - 2010",
+       caption = "Data source: Lobell, D.B., et al. 2006",
+       tag = "Figure 1:",
+       x = "Year",
+       y = expression(paste("Yield Anomaly ton acre"^-1))) +
+  theme(plot.title = element_text(face = "bold", size = 14),
+        axis.title.x = element_text(face = "bold", size = 11),
+        axis.title.y = element_text(face = "bold", size = 11),
+        panel.background = element_rect(fill = "white"),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_line(size = 0.25, 
+                                        linetype = 'solid', colour = "grey88"),
+        panel.grid.minor = element_blank())
 
 anmly_plot
 ```
+
+## Summarize Results
+
+This analysis explored changes in almond crop yield anomaly from 1989 to 2010 as a function of monthly precipitation and average minimum temperature. The minimum yield anomaly from 1989 to 2010 was `r round(yield_min, 2)` which occurred in 1989. The maximum almond yield anomaly was `r round(yield_max,2)`, which occurred in 1995. The average yield anomaly from 1989 to 2010 was `r round(avg_yield, 2)`. The differences in precipitation had a positive influence on the yield anomaly as the years with higher precipitation had higher yield anomalies. The large spike in yield anomaly in 1995 could possibly be due to the increased precipitation caused by the 1994 - 1995 El Niño. There was not an overall increasing or decreasing trend seen in the yield anomaly from 1989 to 2010. 
+
+## Reference
+
+Lobell, D., Field, C., Nicholas, K., & Bonfils, C. (2006). Impacts of future climate change on California perennial crop yields: Model projections with climate and crop uncertainties. Agricultural and Forest Meteorology, 141, 208–218. https://doi.org/10.1016/j.agrformet.2006.10.006
+
 
