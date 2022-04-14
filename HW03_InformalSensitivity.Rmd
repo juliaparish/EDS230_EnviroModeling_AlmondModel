@@ -1,0 +1,60 @@
+---
+title: "Group I: Informal Sensitivity - Almond Yields"
+author: "Paloma Cartwright, Julia Parish, Quin Smith"
+date: "2022/04/19"
+output: pdf_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+```
+
+
+# Informal Sensitivity - Almond Yields
+
+This environmental model and sensitivity analysis was completed as an assignment for the course, Environmental Data Science 230 | Environmental Science & Management: Modeling Environmental Systems. The goal of this assignment was to .... The source data and model design is based on research published in the paper, Impacts of future climate change on California perennial crop yields: Model projections with climate and crop uncertainties (Lobell 2006). 
+
+### Load packages
+```{r}
+library(tidyverse)
+library(here)
+library(janitor)
+library(purrr)
+```
+
+
+
+## 1. Develop a profit model for almond yield
+
+
+
+## 2. Conduct a simple informal sensitivity analysis of total almond yield profit using at least 2 parameters
+
+
+## 3. Create a single graph of the results
+
+
+
+## 4. Output the graph as a stand alone image
+
+
+
+
+
+
+
+
+
+
+## Summarize Results
+
+
+
+## References
+
+Lobell, D., Field, C., Nicholas, K., & Bonfils, C. (2006). Impacts of future climate change on California perennial crop yields: Model projections with climate and crop uncertainties. Agricultural and Forest Meteorology, 141, 208–218. https://doi.org/10.1016/j.agrformet.2006.10.006
+
+Zhang, Z., Jin, Y., Chen, B., & Brown, P. (2019). California Almond Yield Prediction at the Orchard Level With a Machine Learning Approach. Frontiers in Plant Science, 10, 809. https://doi.org/10.3389/fpls.2019.00809
+
+USDA/NASS, Pacific Regional Office. (2019). 2019 California Almond Forecast. USDA National Agricultural Statistics Service. www.nass.usda.gov/ca
+
