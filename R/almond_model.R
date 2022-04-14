@@ -2,7 +2,7 @@
 #' 
 #' This function calculates the yearly almond yield anomaly in tons per acre based on the model in the Lobell 2006 paper studied in class.
 #' 
-#' @authors Paloma Cartwright, Julia Parish, Quinn Smith 
+#' @authors Paloma Cartwright, Julia Parish, Quin Smith 
 #'
 #' @param Tn2 minimum temperature (degrees Celsius) for February 
 #' @param Tn2_coeff1 coefficient 1 to be used with Tn2, default set at -0.015
