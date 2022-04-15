@@ -1,38 +1,44 @@
-# EDS230 Environmental Modeling - Almond Yield Model
+# EDS230: Modeling Environmental Systems
+### Authors: Group I Paloma Cartwright, Julia Parish, Quinlan Smith
 
-## Almond Yield as a Function
-
-**Assignment 2**
-
+## Assignment 2: Almond Yield Function
 This model was developed as an assignment for a UCSB Bren School Master’s program course, Environmental Data Science 230: | Environmental Science Management 232: Environmental Modeling. 
 
-For assignment two we will be building the almond model (from Lobell et al. 2006) in R. The conceptual model, from the last assignment, should have laid the foundation for what needs to be done, now your job is to figure out how to implement it in R. *As a side note:* there are always multiple ways to code something in R; of course focus on getting the correct answer first, but also remember that we want to strive for our code being as simple and streamline as possible. Style counts. Make sure you choose meaningful variable names and add comments. Include comments at the top of the function to tell the user what the inputs/outputs are and their units and format.
+Original assignment instructions can be found [here](https://naomitague.github.io/ESM232_course/assignments/almond_yield_function.html). 
 
-Here are some ideas to think though. First, the climate data is going to need to be subsetted. How the almond function is written will dictate how the climate data is going to be stored, after it is subsetted. Second, we want to build a clean function that is versatile. Here are two model outlines to follow
+### Motivation and Goal
+This environmental model and analysis was completed as an assignment for the course, Environmental Data Science 230 | Environmental Science & Management: Modeling Environmental Systems. The source data and model design is based on research published in the paper, [Impacts of future climate change on California perennial crop yields: Model projections with climate and crop uncertainties by Lobell et al. (2006)](https://www.sciencedirect.com/science/article/pii/S016819230600308X). This assignment focuses on developing the skills to creation functions in R, source R scripts into RMarkdown files, and learn how to build a simple model to analyze environmental data.
 
-● Almond_model <- function(clim_var1, clim_var2, parameters){……}
+The **goal** of this assignment was to build a model of almond yield production in California between the years 1989 and 2010 based on precipitation and temperature data. 
 
-● Almond_model <- function(clim, parameters){……}
+### Installation
+The following **packages** were utilized:
+- `here`
+- `lubridate`
+- `tidyverse`
 
-The first example is where the climate variables are separately input into the function, and the second is where a data frame is the input in the function and you extract the useful data from it. The first demands that the data is subset beforehand, the second subsets the data as part of the function, but demands the dataframe be structured in a specific way. There are advantages to both – the first is simpler model to ‘code’ ; but requires more ‘beforehand’ work by the user. You can pick which option you prefer (or try both)
+### Data
 
-**Steps:**
+Model parameter values were taken from [Lobell et al. (2006)](https://www.sciencedirect.com/science/article/pii/S016819230600308X). Climate data were source from [here](https://github.com/naomitague/ESM232_Examples/tree/main/Data). 
 
-code your function in R; save it as a separate file called “the name of your function”.R; Make sure you include documentation Store your R function in a git repository - you will need it again for future assignment
+## Assignment 3: Almond Profit Sensitivity Analysis 
 
-in an Rmarkdown document, write code to read in the “clim.txt”, (which you can find on [esm232_examples github site]{https://github.com/naomitague/ESM232_Examples.git}
+Original assignment instructions can be found [here](https://naomitague.github.io/ESM232_course/assignments/assign3_informal_sen.html). 
 
-do any subsetting required for input to your function, run the function and save results
+### Motivation and Goal
 
-**Summarize the results as follows**
+For assignment 3, we built upon the previous assignment's almond yield production model. 
 
-The end product we are looking for: calculate the almond yield anomaly for each year, and summarize the data. We will leave how to summarize the data up to you. Think about what metrics would be best to explain the trends in outputs. Tables, graphs, and summary metrics are all acceptable – these you will generate outside the function in your Rmarkdown. Make sure to include axis labels, units and captions.
+The **goal** of this assignment was to
 
-**Write Up Summary**
+### Installation
 
-Write one paragraph summarizing your findings. Submit pdf of rmarkdown.and the function.R file to gauchospace – Submit as a group
+The following **packages** were utilized:
+- `here`
+- `lubridate`
+- `tidyverse`
 
-**Three answers to check your model against:**
-- 2000: 9.59
-- 2001: 159.51
-- 2002: 0.24
+### Data
+
+Model parameter values were taken from [Lobell et al. (2006)](https://www.sciencedirect.com/science/article/pii/S016819230600308X). Climate data were source from [here](https://github.com/naomitague/ESM232_Examples/tree/main/Data). 
+
