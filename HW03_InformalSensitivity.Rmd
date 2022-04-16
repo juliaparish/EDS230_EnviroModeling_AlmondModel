@@ -7,6 +7,10 @@ output: pdf_document
 
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
+library(tidyverse)
+library(here)
+library(janitor)
+library(purrr)
 ```
 
 
@@ -14,13 +18,85 @@ knitr::opts_chunk$set(echo = TRUE, message = FALSE, warning = FALSE)
 
 This environmental model and sensitivity analysis was completed as an assignment for the course, Environmental Data Science 230 | Environmental Science & Management: Modeling Environmental Systems. The goal of this assignment was to .... The source data and model design is based on research published in the paper, Impacts of future climate change on California perennial crop yields: Model projections with climate and crop uncertainties (Lobell 2006). 
 
-### Load packages
+### Load Functions
+
 ```{r}
-library(tidyverse)
-library(here)
-library(janitor)
-library(purrr)
+source(here("R/almond_model.R"))
+source(here("R/compute_NPV.R"))
+source(here("R/compute_profit_fromanmly.R"))
+
 ```
+
+## Read in Climate Data 
+
+```{r}
+clim <- read.table(here("data/clim.txt"), header = TRUE) %>% 
+  clean_names()
+```
+
+# Create Data Frame of Almond Prices 
+
+This data was based off of the USDA Almond Forecast which can be found [here](https://www.nass.usda.gov/Statistics_by_State/California/Publications/Specialty_and_Other_Releases/Almond/Forecast/201005almpd.pdf). For the years 1989 - 1994, the almond price was not provided we used the average price from 1995 - 2010 as the value for the missing years. 
+
+```{r}
+
+year <- c(1989, 1990, 1991, 1992, 1993, 1994, 1995, 
+          1996, 1997, 1998, 1999, 2000, 2001, 2002, 
+          2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010)
+
+prices <- c(2.02, 2.02, 2.02, 2.02, 2.02, 2.02, 2.48, 
+            2.08, 1.56, 1.41, 0.86, 0.97, 0.91, 1.11, 
+            1.57, 2.21, 2.81, 2.06, 1.75, 1.45, 1.65, 1.79)
+
+price_per_year <- data.frame(year, prices)
+```
+
+# Calculate Yield Anomaly 
+
+## Subset the data
+
+```{r}
+#subset the clim data for monthly averages
+clim_avg <- clim %>% 
+  group_by(year, month) %>% 
+  summarize(mean_temp = mean(tmin_c), 
+            tot_precip = sum(precip)) %>% 
+  filter(month %in% c(1, 2))
+
+# create a variable for avg. February temp. data
+Tn2 <- clim_avg %>% 
+  group_by(year) %>% 
+  mutate(Tn2 = case_when(month == 2 ~ mean_temp)) %>% 
+  select(year, Tn2) %>% 
+  drop_na()
+
+# create a variable for avg. January precipitation data
+P1 <- clim_avg %>% 
+  group_by(year) %>% 
+  mutate(P1 = case_when(month == 1 ~ tot_precip)) %>% 
+  select(year, P1) %>% 
+  drop_na
+
+# create a variable combined temp and precip data
+func_vars <- cbind(Tn2, P1 = P1$P1)
+```
+
+## Run Almond Yield Model 
+
+```{r}
+#run almond_model() on subsetted clim data
+almond_yield_anmly <- func_vars %>% 
+  mutate(yield_anmly = almond_model(Tn2 = Tn2, P1 = P1))
+  
+```
+
+```{r}
+profit <- compute_profit_fromanmly(anmly = almond_yield_anmly$yield_anmly, 
+                                   year = almond_yield_anmly$year, 
+                                   price = price_per_year$prices)
+```
+
+
 
 
 

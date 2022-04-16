@@ -10,13 +10,13 @@
 #' @param discount rate (default 0.12)
 #' @return data frame with estimate of profit ($/tons/acre)
 
-profit_model <- function(anmly, year, price, discount = 0.12) {
+compute_profit_fromanmly <- function(anmly, year, price, discount = 0.12) {
   
   if (length(anmly) < 1)
     return(NA)
   
-  if (min(anmly) < 0)
-    return(NA)
+  # if (min(anmly) < 0) # Commented this out because we have some anomalies that are less than 0
+  #   return(NA)
   
   scen <- seq(from = 1, to = length(anmly))
   yearprofit <- data.frame(scen = scen, anmly = anmly, year = year)
