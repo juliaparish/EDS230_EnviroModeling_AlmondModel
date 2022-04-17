@@ -90,18 +90,13 @@ almond_yield_anmly <- func_vars %>%
   
 ```
 
+## 1. Develop a profit model for almond yield
+
 ```{r}
 profit <- compute_profit_fromanmly(anmly = almond_yield_anmly$yield_anmly, 
                                    year = almond_yield_anmly$year, 
                                    price = price_per_year$prices)
 ```
-
-
-
-
-
-## 1. Develop a profit model for almond yield
-
 
 
 ## 2. Conduct a simple informal sensitivity analysis of total almond yield profit using at least 2 parameters
@@ -134,3 +129,6 @@ Zhang, Z., Jin, Y., Chen, B., & Brown, P. (2019). California Almond Yield Predic
 
 USDA/NASS, Pacific Regional Office. (2019). 2019 California Almond Forecast. USDA National Agricultural Statistics Service. www.nass.usda.gov/ca
 
+## Repository
+
+[Group I Github Repository](https://github.com/juliaparish/EDS230_EnviroModeling_AlmondModel) https://github.com/juliaparish/EDS230_EnviroModeling_AlmondModel
