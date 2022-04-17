@@ -15,14 +15,15 @@ compute_profit_fromanmly <- function(anmly, year, price, discount = 0.12) {
   if (length(anmly) < 1)
     return(NA)
   
-  # if (min(anmly) < 0) # Commented this out because we have some anomalies that are less than 0
-  #   return(NA)
-  
   scen <- seq(from = 1, to = length(anmly))
+  
   yearprofit <- data.frame(scen = scen, anmly = anmly, year = year)
+  
   yearprofit$net <- yearprofit$anmly * price
+
+
   yearprofit <- yearprofit %>% 
-    mutate(netpre = compute_NPV(value = net, time = year - year[1], discount = discount))
+    mutate(price = price, netpre = compute_NPV(value = net, time = year - year[1], discount = discount))
   
   return(yearprofit)
 }
