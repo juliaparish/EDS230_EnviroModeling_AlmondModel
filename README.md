@@ -14,7 +14,7 @@ The **goal** of this assignment was to build a model of almond yield production 
 ### Installation
 The following **packages** were utilized:
 - `here`
-- `lubridate`
+- `janitor`
 - `tidyverse`
 
 ### Data
@@ -35,8 +35,8 @@ The **goal** of this assignment was to
 
 The following **packages** were utilized:
 - `here`
-- `lubridate`
-- `tidyverse`
+- `janitor`
+- `purrr`
 - `tidyverse`
 
 ### Data
