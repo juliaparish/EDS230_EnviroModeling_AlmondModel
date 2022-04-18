@@ -126,9 +126,12 @@ Tn2_sample <- runif(n = nsamples, min = min(func_vars$Tn2), max = max(func_vars$
 results_Tn2 <- Tn2_sample %>% 
   map(~almond_model_test(df = func_vars, P1 = func_vars$P1, price = func_vars$price, Tn2 = .x))
 
-tmpTn2 <- map_df(results_Tn2,`[`, c("profit")) 
+tmpTn2 <- map_df(results_Tn2,`[`, c("profit"))
 Tn2_df <- data.frame(year = tmpTn2$profit$year, 
                      netpre= tmpTn2$profit$netpre)
+
+tmpTn2mn <- map_df(results_Tn2,`[`, c("mean_netpre"))
+Tn2mn_df <- data.frame(Tn2 = Tn2_sample, mean_netpre = tmpTn2mn$mean_netpre)
 
 #P1 sensitivity
 P1_sample <- runif(n = nsamples, min = min(func_vars$P1), max = max(func_vars$P1))
@@ -140,6 +143,9 @@ tmpP1 <- map_df(results_P1, `[`, c("profit"))
 P1_df <- data.frame(year = tmpP1$profit$year, 
                      netpre= tmpP1$profit$netpre)
 
+tmpP1mn <- map_df(results_P1,`[`, c("mean_netpre"))
+P1mn_df <- data.frame(P1 = P1_sample, mean_netpre = tmpP1mn$mean_netpre)
+
 #price sensitivity
 price_sample <- runif(n = nsamples, min = min(func_vars$price), max = max(func_vars$price))
 
@@ -149,6 +155,9 @@ results_price <- price_sample %>%
 tmpprice <- map_df(results_price, `[`, c("profit"))
 price_df <- data.frame(year = tmpprice$profit$year, 
                      netpre= tmpprice$profit$netpre)
+
+tmppricemn <- map_df(results_price,`[`, c("mean_netpre"))
+pricemn_df <- data.frame(price = price_sample, mean_netpre = tmppricemn$mean_netpre)
 ```
 
 
@@ -173,6 +182,18 @@ ggplot(price_df,
 ggplot(price_df, 
        aes(x = as.factor(year), y = netpre, group = year)) +
   geom_point()
+
+ggplot(pricemn_df, aes(x = price, y = mean_netpre)) +
+  geom_point() +
+  theme_bw()
+
+ggplot(Tn2mn_df, aes(x = Tn2, y = mean_netpre)) +
+  geom_point() +
+  theme_bw()
+
+ggplot(P1mn_df, aes(x = P1, y = mean_netpre)) +
+  geom_point() +
+  theme_bw()
 ```
 
 
