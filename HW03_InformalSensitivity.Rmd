@@ -12,6 +12,7 @@ library(here)
 library(janitor)
 library(purrr)
 library(RColorBrewer)
+library(patchwork)
 
 options(scipen=999)
 ```
@@ -101,6 +102,7 @@ almond_yield_anmly <- func_vars %>%
 ## 1. Develop a profit model for almond yield
 
 ```{r}
+#run compute_profit_fromanmly() over the almond data
 profit <- compute_profit_fromanmly(anmly = almond_yield_anmly$yield_anmly, 
                                    year = almond_yield_anmly$year, 
                                    price = price_per_year$prices)
@@ -120,43 +122,67 @@ profit <- compute_profit_fromanmly(anmly = almond_yield_anmly$yield_anmly,
 nsamples <- 100
 
 # test the sensitivity of model to each param (temp, precip)
-#Tn2 sensitivity, uniform random sample
+#Tn2 sensitivity
+#uniform random sample
 Tn2_sample <- runif(n = nsamples, min = min(func_vars$Tn2), max = max(func_vars$Tn2))
 
+#run almond_model_test() over the variables, using sample of Tn2
 results_Tn2 <- Tn2_sample %>% 
   map(~almond_model_test(df = func_vars, P1 = func_vars$P1, price = func_vars$price, Tn2 = .x))
 
+#create temp data structure from purrr results
 tmpTn2 <- map_df(results_Tn2,`[`, c("profit"))
+
+#create dataframe from temp results
 Tn2_df <- data.frame(year = tmpTn2$profit$year, 
                      netpre= tmpTn2$profit$netpre)
 
+#create temp data strucuture from purrr results for mean
 tmpTn2mn <- map_df(results_Tn2,`[`, c("mean_netpre"))
+
+#create dataframe from temp results
 Tn2mn_df <- data.frame(Tn2 = Tn2_sample, mean_netpre = tmpTn2mn$mean_netpre)
 
 #P1 sensitivity
+#uniform random sample
 P1_sample <- runif(n = nsamples, min = min(func_vars$P1), max = max(func_vars$P1))
 
+#run almond_model_test() over the variables, using sample of P1
 results_P1 <- P1_sample %>% 
   map(~almond_model_test(df = func_vars, Tn2 = func_vars$Tn2, price = func_vars$price, P1 = .x))
 
+#create temp data structure from purrr results
 tmpP1 <- map_df(results_P1, `[`, c("profit"))
+
+#create dataframe from temp results
 P1_df <- data.frame(year = tmpP1$profit$year, 
                      netpre= tmpP1$profit$netpre)
 
+#create temp data strucuture from purrr results for mean
 tmpP1mn <- map_df(results_P1,`[`, c("mean_netpre"))
+
+#create dataframe from temp results
 P1mn_df <- data.frame(P1 = P1_sample, mean_netpre = tmpP1mn$mean_netpre)
 
 #price sensitivity
+#uniform random sample
 price_sample <- runif(n = nsamples, min = min(func_vars$price), max = max(func_vars$price))
 
+#run almond_model_test() over the variables, using sample of price
 results_price <- price_sample %>% 
   map(~almond_model_test(df = func_vars, P1 = func_vars$P1, Tn2 = func_vars$Tn2, price = .x))
 
+#create temp data structure from purrr results
 tmpprice <- map_df(results_price, `[`, c("profit"))
+
+#create dataframe from temp results
 price_df <- data.frame(year = tmpprice$profit$year, 
                      netpre= tmpprice$profit$netpre)
 
+#create temp data strucuture from purrr results for mean
 tmppricemn <- map_df(results_price,`[`, c("mean_netpre"))
+
+#create dataframe from temp results
 pricemn_df <- data.frame(price = price_sample, mean_netpre = tmppricemn$mean_netpre)
 ```
 
