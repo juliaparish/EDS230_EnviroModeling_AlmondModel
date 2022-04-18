@@ -12,11 +12,12 @@
 #' @param P1_coeff1 coefficient 1 to be used with P1, default set at -0.07
 #' @param P1_coeff2 coefficient 2 to be used with P1^2, default set at 0.0043
 #' @param constant default set at 0.28
+#' @param price annual price/ton of almonds
 #'
-#' @return almond yield anomaly (ton/acre)
+#' @return a list containing: (1) a dataframe with almond yield anomaly (ton/acre), year, and net & netpre of anomaly; (2) mean netpre
 #'
-#' @examples almond_model(Tn2 = 20, P1 = 8)
-#' @examples almond_model(Tn2 = 20, Tn2_coeff1 = -0.015, Tn2_coeff2 = -0.0046, P1 = 8, P1_coeff1 = -0.07, P1_coeff2 = 0.0043, constant = 0.28)
+#' @examples almond_model_test(df, Tn2 = 20, P1 = 8)
+#' @examples almond_model_test(df, Tn2 = 20, Tn2_coeff1 = -0.015, Tn2_coeff2 = -0.0046, P1 = 8, P1_coeff1 = -0.07, P1_coeff2 = 0.0043, constant = 0.28, price = 4000)
 #' 
 
 almond_model_test <- function(df, Tn2, Tn2_coeff1 = -0.015, Tn2_coeff2 = -0.0046,
