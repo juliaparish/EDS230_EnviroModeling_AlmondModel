@@ -11,6 +11,7 @@ library(tidyverse)
 library(here)
 library(janitor)
 library(purrr)
+library(RColorBrewer)
 
 options(scipen=999)
 ```
@@ -18,7 +19,7 @@ options(scipen=999)
 
 # Informal Sensitivity - Almond Yields
 
-This environmental model and sensitivity analysis was completed as an assignment for the course, Environmental Data Science 230 | Environmental Science & Management: Modeling Environmental Systems. The goal of this assignment was to .... The source data and model design is based on research published in the paper, Impacts of future climate change on California perennial crop yields: Model projections with climate and crop uncertainties (Lobell 2006). 
+This environmental model and sensitivity analysis was completed as an assignment for the course, Environmental Data Science 230 | Environmental Science & Management: Modeling Environmental Systems. The goal of this assignment was to develop a profit model for the California almond yield, conduct a simple informal sensitivity analysis, and graph analysis results. The source data and model design is based on research published in the paper, Impacts of future climate change on California perennial crop yields: Model projections with climate and crop uncertainties (Lobell 2006). 
 
 ### Load Functions
 
@@ -29,16 +30,16 @@ source(here("R/compute_profit_fromanmly.R"))
 source(here("R/almond_sensitivity.R"))
 ```
 
-## Read in Climate Data 
+### Read in Climate Data 
 
 ```{r}
 clim <- read.table(here("data/clim.txt"), header = TRUE) %>% 
   clean_names()
 ```
 
-# Create Data Frame of Almond Prices 
+## Create Data Frame of Almond Prices 
 
-This data was based off of the USDA Almond Forecast which can be found [here](https://www.nass.usda.gov/Statistics_by_State/California/Publications/Specialty_and_Other_Releases/Almond/Forecast/201005almpd.pdf). For the years 1989 - 1994, the almond price was not provided we used the average price from 1995 - 2010 as the value for the missing years. 
+This data was based off of the USDA Almond Forecast, which can be found [here](https://www.nass.usda.gov/Statistics_by_State/California/Publications/Specialty_and_Other_Releases/Almond/Forecast/201005almpd.pdf) (USDA/NASS 2019). For the years 1989 - 1994, the almond price was not provided we used the average price from 1995 - 2010 as the value for the missing years. 
 
 ```{r}
 #years 1989-2010
@@ -54,9 +55,11 @@ prices <- c(2.02, 2.02, 2.02, 2.02, 2.02, 2.02, 2.48,
 price_per_year <- data.frame(year, prices)
 ```
 
-# Calculate Yield Anomaly 
+\newpage
 
-## Subset the data
+## Calculate Yield Anomaly 
+
+### Subset the data
 
 ```{r}
 #subset the clim data for monthly averages
@@ -84,7 +87,7 @@ P1 <- clim_avg %>%
 func_vars <- cbind(Tn2, P1 = P1$P1, price = price_per_year$prices)
 ```
 
-## Run Almond Yield Model 
+### Run Almond Yield Model 
 
 ```{r}
 #run almond_model() on subsetted clim data
@@ -92,6 +95,8 @@ almond_yield_anmly <- func_vars %>%
   mutate(yield_anmly = almond_model(Tn2 = Tn2, P1 = P1))
   
 ```
+
+# Assignment 03 Responses
 
 ## 1. Develop a profit model for almond yield
 
@@ -141,15 +146,33 @@ price_df <- data.frame(year = tmp$profit$year,
 
 ## 3. Create a single graph of the results
 
+```{r, fig.cap = "Boxplot of almond prices"}
+# unadjusted box plot
+ggplot(price_df, 
+       aes(as.factor(year),netpre, group=year)) +
+  geom_boxplot(color = "gray61", fill = "navajowhite") +
+  labs(title = "Almond Prices",
+       x="Year", y="Profit in current $",
+       caption = "Data Sources: Lobell 2016, USDA/NASS 2019") +
+  scale_y_continuous(labels=scales::dollar_format()) +
+  theme_minimal()
+```
 
 
 ## 4. Output the graph as a stand alone image
 
-
-
-
-
-
+```{r}
+# ggsave(filename,
+#   plot = last_plot(),
+#   device = NULL,
+#   path = NULL,
+#   scale = 1,
+#   width = NA,
+#   height = NA,
+#   units = "cm",
+#   dpi = 300,
+# )
+```
 
 
 
