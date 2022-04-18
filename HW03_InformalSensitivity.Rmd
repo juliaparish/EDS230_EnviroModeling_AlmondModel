@@ -11,6 +11,8 @@ library(tidyverse)
 library(here)
 library(janitor)
 library(purrr)
+
+options(scipen=999)
 ```
 
 
@@ -24,8 +26,7 @@ This environmental model and sensitivity analysis was completed as an assignment
 source(here("R/almond_model.R"))
 source(here("R/compute_NPV.R"))
 source(here("R/compute_profit_fromanmly.R"))
-source(here("R/test.R"))
-
+source(here("R/almond_sensitivity.R"))
 ```
 
 ## Read in Climate Data 
@@ -80,7 +81,7 @@ P1 <- clim_avg %>%
   drop_na
 
 # create a variable combined temp and precip data
-func_vars <- cbind(Tn2, P1 = P1$P1)
+func_vars <- cbind(Tn2, P1 = P1$P1, price = price_per_year$prices)
 ```
 
 ## Run Almond Yield Model 
@@ -104,14 +105,37 @@ profit <- compute_profit_fromanmly(anmly = almond_yield_anmly$yield_anmly,
 ## 2. Conduct a simple informal sensitivity analysis of total almond yield profit using at least 2 parameters
 
 ```{r}
-#test
+nsamples <- 100
 
-func_vars_random <- cbind(Tn2, P1 = P1$P1)
+#Tn2 sensitivity
+Tn2_runif <- runif(n = nsamples, min = min(func_vars$Tn2), max = max(func_vars$Tn2))
 
-Tn2_ran <- runif(100, min = min(func_vars_random$Tn2), max = max(func_vars_random$Tn2))
+results_Tn2 <- Tn2_runif %>% 
+  map(~almond_model_test(df = func_vars, P1 = func_vars$P1, price = func_vars$price, Tn2 = .x))
 
-results <- Tn2_ran %>% 
-  map(~almond_model_test(df = func_vars_random, P1 = func_vars_random$P1, Tn2 = .x))
+tmp <- map_df(results_Tn2,`[`, c("profit")) 
+Tn2_df <- data.frame(year = tmp$profit$year, 
+                     netpre= tmp$profit$netpre)
+
+#P1 sensitivity
+P1_runif <- runif(n = nsamples, min = min(func_vars$P1), max = max(func_vars$P1))
+
+results_P1 <- P1_runif %>% 
+  map(~almond_model_test(df = func_vars, Tn2 = func_vars$Tn2, price = func_vars$price, P1 = .x))
+
+tmp <- map_df(results_P1, `[`, c("profit"))
+P1_df <- data.frame(year = tmp$profit$year, 
+                     netpre= tmp$profit$netpre)
+
+#price sensitivity
+price_runif <- runif(n = nsamples, min = min(func_vars$price), max = max(func_vars$price))
+
+results_price <- price_runif %>% 
+  map(~almond_model_test(df = func_vars, P1 = func_vars$P1, Tn2 = func_vars$Tn2, price = .x))
+
+tmp <- map_df(results_price, `[`, c("profit"))
+price_df <- data.frame(year = tmp$profit$year, 
+                     netpre= tmp$profit$netpre)
 ```
 
 
