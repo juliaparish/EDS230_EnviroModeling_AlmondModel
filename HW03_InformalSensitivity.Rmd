@@ -27,7 +27,7 @@ This environmental model and sensitivity analysis was completed as an assignment
 source(here("R/almond_model.R"))
 source(here("R/compute_NPV.R"))
 source(here("R/compute_profit_fromanmly.R"))
-source(here("R/almond_sensitivity.R"))
+source(here("R/almond_model_test.R"))
 ```
 
 ### Read in Climate Data 
@@ -83,7 +83,7 @@ P1 <- clim_avg %>%
   select(year, P1) %>% 
   drop_na
 
-# create a variable combined temp and precip data
+# create a variable combined temp and precip data and added price
 func_vars <- cbind(Tn2, P1 = P1$P1, price = price_per_year$prices)
 ```
 
@@ -106,41 +106,49 @@ profit <- compute_profit_fromanmly(anmly = almond_yield_anmly$yield_anmly,
                                    price = price_per_year$prices)
 ```
 
+### Profit model visualization
+
+```{r}
+# profit viz - geom_line or point, similar to last assignment - JULIA
+
+```
+
 
 ## 2. Conduct a simple informal sensitivity analysis of total almond yield profit using at least 2 parameters
 
 ```{r}
 nsamples <- 100
 
-#Tn2 sensitivity
-Tn2_runif <- runif(n = nsamples, min = min(func_vars$Tn2), max = max(func_vars$Tn2))
+# test the sensitivity of model to each param (temp, precip)
+#Tn2 sensitivity, uniform random sample
+Tn2_sample <- runif(n = nsamples, min = min(func_vars$Tn2), max = max(func_vars$Tn2))
 
-results_Tn2 <- Tn2_runif %>% 
+results_Tn2 <- Tn2_sample %>% 
   map(~almond_model_test(df = func_vars, P1 = func_vars$P1, price = func_vars$price, Tn2 = .x))
 
-tmp <- map_df(results_Tn2,`[`, c("profit")) 
-Tn2_df <- data.frame(year = tmp$profit$year, 
-                     netpre= tmp$profit$netpre)
+tmpTn2 <- map_df(results_Tn2,`[`, c("profit")) 
+Tn2_df <- data.frame(year = tmpTn2$profit$year, 
+                     netpre= tmpTn2$profit$netpre)
 
 #P1 sensitivity
-P1_runif <- runif(n = nsamples, min = min(func_vars$P1), max = max(func_vars$P1))
+P1_sample <- runif(n = nsamples, min = min(func_vars$P1), max = max(func_vars$P1))
 
-results_P1 <- P1_runif %>% 
+results_P1 <- P1_sample %>% 
   map(~almond_model_test(df = func_vars, Tn2 = func_vars$Tn2, price = func_vars$price, P1 = .x))
 
-tmp <- map_df(results_P1, `[`, c("profit"))
-P1_df <- data.frame(year = tmp$profit$year, 
-                     netpre= tmp$profit$netpre)
+tmpP1 <- map_df(results_P1, `[`, c("profit"))
+P1_df <- data.frame(year = tmpP1$profit$year, 
+                     netpre= tmpP1$profit$netpre)
 
 #price sensitivity
-price_runif <- runif(n = nsamples, min = min(func_vars$price), max = max(func_vars$price))
+price_sample <- runif(n = nsamples, min = min(func_vars$price), max = max(func_vars$price))
 
-results_price <- price_runif %>% 
+results_price <- price_sample %>% 
   map(~almond_model_test(df = func_vars, P1 = func_vars$P1, Tn2 = func_vars$Tn2, price = .x))
 
-tmp <- map_df(results_price, `[`, c("profit"))
-price_df <- data.frame(year = tmp$profit$year, 
-                     netpre= tmp$profit$netpre)
+tmpprice <- map_df(results_price, `[`, c("profit"))
+price_df <- data.frame(year = tmpprice$profit$year, 
+                     netpre= tmpprice$profit$netpre)
 ```
 
 
@@ -149,13 +157,22 @@ price_df <- data.frame(year = tmp$profit$year,
 ```{r, fig.cap = "Boxplot of almond prices"}
 # unadjusted box plot
 ggplot(price_df, 
-       aes(as.factor(year),netpre, group=year)) +
+       aes(x = as.factor(year), y = netpre, group=year)) +
   geom_boxplot(color = "gray61", fill = "navajowhite") +
-  labs(title = "Almond Prices",
+  labs(title = "Almond Profit Anomaly",
        x="Year", y="Profit in current $",
        caption = "Data Sources: Lobell 2016, USDA/NASS 2019") +
   scale_y_continuous(labels=scales::dollar_format()) +
   theme_minimal()
+```
+
+
+
+
+```{r}
+ggplot(price_df, 
+       aes(x = as.factor(year), y = netpre, group = year)) +
+  geom_point()
 ```
 
 
