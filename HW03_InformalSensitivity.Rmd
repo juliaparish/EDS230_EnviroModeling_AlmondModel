@@ -57,7 +57,6 @@ price_per_year <- data.frame(year, prices)
 ```
 
 \newpage
-
 ## Calculate Yield Anomaly 
 
 ### Subset the data
@@ -97,6 +96,8 @@ almond_yield_anmly <- func_vars %>%
   
 ```
 
+\newpage
+
 # Assignment 03 Responses
 
 ## 1. Develop a profit model for almond yield
@@ -108,13 +109,43 @@ profit <- compute_profit_fromanmly(anmly = almond_yield_anmly$yield_anmly,
                                    price = price_per_year$prices)
 ```
 
+We first developed a profit model function to calculate the profit generated from almond yield anomaly (i.e. almond yield profit anomaly). We used historical California almond price data from the USDA as the basis for price. Price data was missing from 1989-1994. For these missing values, we used the average price between 1995-2010 (`$2.02/lb * 2000 lbs/ton`). Profit was measured as the net present value with a 12% discount rate, taken from the examples in class. A positive yield anomaly produced an increase in profit (positive `$` value), while a negative yield anomaly produced a reduction in profit (negative `$` value). The results of this analysis are shown in the figure below. 
+
 ### Profit model visualization
 
-```{r}
-# profit viz - geom_line or point, similar to last assignment - JULIA
+```{r, fig.cap="Annual profit generated from California almond yield anomaly"}
+profit_plot <- ggplot(data = profit, 
+                     aes(x = year, y = netpre)) +
+  geom_line(color = "#E1BE6A") +
+  geom_point(color = "#40B0A6") +
+  scale_y_continuous(labels=scales::dollar_format()) +
+  geom_text(aes(x = 1991, y = 400000, label = "$221,945"), stat = "unique", 
+            size = 3, color = "slategrey") + 
+  geom_text(aes(x = 1995, y = 5000000, label = "$4,824,702"), stat = "unique", 
+            size = 3, color = "slategrey") +
+  geom_text(aes(x = 1997, y = 600000, label = "$415,452"), stat = "unique", 
+            size = 3, color = "slategrey") +
+  geom_text(aes(x = 2005, y = 800000, label = "$601,725"), stat = "unique", 
+            size = 3, color = "slategrey") +
+  geom_text(aes(x = 2008, y = 400000, label = "$194,039"), stat = "unique", 
+            size = 3, color = "slategrey") +
+  labs(title = "California Almond Yield Profit Anomaly",
+       subtitle = "1989 - 2010",
+       caption = "Data source: Lobell 2006,USDA/NASS 2019",
+       x = "Year",
+       y = "Profit in current $") +
+  theme(plot.title = element_text(face = "bold", size = 14),
+        axis.title.x = element_text(face = "bold", size = 11),
+        axis.title.y = element_text(face = "bold", size = 11),
+        panel.background = element_rect(fill = "white"),
+        panel.border = element_blank(),
+        axis.line = element_line(colour = "black"),
+        panel.grid.major = element_line(size = 0.25, 
+                                        linetype = 'solid', colour = "grey88"),
+        panel.grid.minor = element_blank())
 
+profit_plot
 ```
-
 
 ## 2. Conduct a simple informal sensitivity analysis of total almond yield profit using at least 2 parameters
 
@@ -186,86 +217,118 @@ tmppricemn <- map_df(results_price,`[`, c("mean_netpre"))
 pricemn_df <- data.frame(price = price_sample, mean_netpre = tmppricemn$mean_netpre)
 ```
 
+To better understand the influence of the different variables in the Lobell (2006) almond yield anomaly model on profit, we conducted an informal sensitivity analysis using the purrr package in R. First, we constructed 100 samples of January total precipitation, February monthly average low temperatures, and almond yield price using random uniform distributions. We used actual minimum and maximum values from the data (and averages for price between 1989 and 1994) for each variable to constrain the uniform distribution range. We then used the map() function in purrr to run all the samples in each distribution over the data, keeping all other variables constant.
 
 ## 3. Create a single graph of the results
 
-```{r, fig.cap = "..."}
+We first produced the distribution of annual profit anomalies as a function of uniform variation in the three different variables, shown in the boxplot graphs below.  
+
+### Boxplots 
+```{r, fig.cap = "Annual Distribution of Almond Profit Anomaly"}
 # function of Feb temperature box plot
-ggplot(Tn2_df, 
+Tn2_plot <- ggplot(Tn2_df, 
        aes(x = as.factor(year), y = netpre, group=year)) +
   geom_boxplot(color = "gray61", fill = "grey61") +
-  labs(title = "...",
-       x="Feb temp", y="Profit in current $",
-       caption = "Data Sources: Lobell 2016, USDA/NASS 2019") +
+  labs(subtitle = "A. Function of Minimum Temperature (°C)",
+       x = " ", 
+       y = "Profit in current $") +
+  scale_x_discrete(breaks=seq(1989, 2010, 2)) +
   scale_y_continuous(labels=scales::dollar_format()) +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 
 # function of Jan precip box plot
-ggplot(P1_df, 
+P1_plot <- ggplot(P1_df, 
        aes(x = as.factor(year), y = netpre, group=year)) +
-  geom_boxplot(color = "gray61", fill = "grey61") +
-  labs(title = "...",
-       x="Jan precip", y="Profit in current $",
-       caption = "Data Sources: Lobell 2016, USDA/NASS 2019") +
+  geom_boxplot(color = "gray61", fill = "lightskyblue1") +
+  labs(subtitle = "B. Function of Precipitation (mm)",
+       x = " ", y = " ") +
+  scale_x_discrete(breaks=seq(1989, 2010, 2)) +
   scale_y_continuous(labels=scales::dollar_format()) +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 
 # function of price box plot
-ggplot(price_df, 
+price_plot <- ggplot(price_df, 
        aes(x = as.factor(year), y = netpre, group=year)) +
   geom_boxplot(color = "gray61", fill = "navajowhite") +
-  labs(title = "Almond Profit Anomaly",
-       x="Year", y="Profit in current $",
-       caption = "Data Sources: Lobell 2016, USDA/NASS 2019") +
+  labs(subtitle = "C. Function of Price",
+       x = " ", y = "Profit in current $") +
   scale_y_continuous(labels=scales::dollar_format()) +
-  theme_minimal()
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1))
 
+patchwork <- (Tn2_plot + P1_plot) / price_plot
 
-
+patchwork + plot_annotation(
+  title = "Annual Distribution of Almond Profit Anomaly",
+  caption = "Data Sources: Lobell 2006, USDA/NASS 2019")
 ```
 
+For variable `precipitation`, we see a downward trend in variation over the years.
 
+For variable `February average minimum temperatures`, we see much less variation over the dataset.
 
+For variable `price`, we see relatively small variations in profit for most years, in comparison to a wide variation in the year 1995. The fact that 1995 was an abnormally rainy year points to something about the interaction and influence of precipitation and price on the model that leads to high variation at high precipitation levels. 
 
-```{r}
-ggplot(price_df, 
+### Scatter Plots
+```{r, fig.cap="Mean Annual Profit from Almond Profit Anomaly"}
+meanTn2_plot <- ggplot(Tn2mn_df, aes(x = Tn2, y = mean_netpre)) +
+  geom_point(color = "gray61", size = 1) +
+  scale_y_continuous(labels=scales::dollar_format()) +
+  labs(subtitle = "A. Function of Minimum Temperature",
+       x = "Average Feburary Minimum Temperature (°C)", 
+       y = "Profit in current $") +
+  theme_minimal() +
+  theme(axis.title.x = element_text(size = 10))
+
+meanP1_plot <- ggplot(P1mn_df, aes(x = P1, y = mean_netpre)) +
+  geom_point(color = "lightskyblue1", size = 1) +
+  scale_y_continuous(labels=scales::dollar_format()) +
+  labs(subtitle = "B. Function of Precipitation",
+       x = "Total January Precipitation (mm)", y = " ") +
+  theme_minimal() +
+  theme(axis.title.x = element_text(size = 10))
+
+price_plot2 <- ggplot(price_df, 
        aes(x = as.factor(year), y = netpre, group = year)) +
-  geom_point()
+  geom_point(shape = 21, color = "gray61", fill = "navajowhite", size = 1.2) + 
+  scale_x_discrete(breaks=seq(1989, 2010, 2)) +
+  scale_y_continuous(labels=scales::dollar_format()) +
+  labs(subtitle = "C. Function of Price",
+       x = "Year", y = "Profit in current $") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust=1, size = 10))
 
-ggplot(pricemn_df, aes(x = price, y = mean_netpre)) +
-  geom_point() +
-  theme_bw()
+meanprice_plot <- ggplot(pricemn_df, aes(x = price, y = mean_netpre)) +
+  geom_point(color = "grey40", size = 1.2) +
+  scale_x_continuous(labels=scales::dollar_format()) +
+  scale_y_continuous(labels=scales::dollar_format()) +
+  labs(subtitle = "D. Function of Mean Price",
+       x = "Price per ton", 
+       y = " ") +
+  theme_minimal() +
+  theme(axis.title.x = element_text(size = 10))
 
-ggplot(Tn2mn_df, aes(x = Tn2, y = mean_netpre)) +
-  geom_point() +
-  theme_bw()
+patchwork <- (meanTn2_plot + meanP1_plot) / (price_plot2 + meanprice_plot)
 
-ggplot(P1mn_df, aes(x = P1, y = mean_netpre)) +
-  geom_point() +
-  theme_bw()
+profit_plot2 <- patchwork + plot_annotation(
+  title = "Mean Annual Profit from Almond Profit Anomaly",
+  caption = "Data Sources: Lobell 2006, USDA/NASS 2019")
+
+profit_plot2
 ```
+
+Because the boxplot visualizations did not answer all of our questions about the variables’ influence on the model, we plotted the average annual profit anomaly against the uniform distribution of each variable individually. From these visualizations, we found a positive linear relationship of almond price to the average annual profit anomaly, a negative, near-linear relationship of average February temperature lows, and a positive, exponential relationship of January precipitation. This provides an explanation as to why there was much more variation of profit anomaly at a higher precipitation level in 1995.
 
 
 ## 4. Output the graph as a stand alone image
 
-```{r}
-# ggsave(filename,
-#   plot = last_plot(),
-#   device = NULL,
-#   path = NULL,
-#   scale = 1,
-#   width = NA,
-#   height = NA,
-#   units = "cm",
-#   dpi = 300,
-# )
+```{r, eval=FALSE}
+ggsave(file = "meanannualprofit.png", plot = profit_plot2,
+  scale = 1, width = 6, height = 6,
+  units = "in", dpi = 300)
 ```
-
-
-
-
-## Summarize Results
-
 
 
 ## References
