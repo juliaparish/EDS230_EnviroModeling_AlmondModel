@@ -231,7 +231,7 @@ Tn2_plot <- ggplot(Tn2_df,
   geom_boxplot(color = "gray61", fill = "grey61") +
   labs(subtitle = "A. Function of Minimum Temperature (°C)",
        x = " ", 
-       y = "Profit in current $") +
+       y = "Profit $/ton/acre") +
   scale_x_discrete(breaks=seq(1989, 2010, 2)) +
   scale_y_continuous(labels=scales::dollar_format()) +
   theme_minimal() +
@@ -253,7 +253,7 @@ price_plot <- ggplot(price_df,
        aes(x = as.factor(year), y = netpre, group=year)) +
   geom_boxplot(color = "gray61", fill = "navajowhite") +
   labs(subtitle = "C. Function of Price",
-       x = " ", y = "Profit in current $") +
+       x = " ", y = "Profit $/ton/acre") +
   scale_y_continuous(labels=scales::dollar_format()) +
   theme_minimal() +
   theme(axis.text.x = element_text(angle = 45, hjust=1))
@@ -280,7 +280,7 @@ meanTn2_plot <- ggplot(Tn2mn_df, aes(x = Tn2, y = mean_netpre)) +
   scale_y_continuous(labels=scales::dollar_format()) +
   labs(subtitle = "A. Function of Minimum Temperature",
        x = "Average Feburary Minimum Temperature (°C)", 
-       y = "Profit in current $") +
+       y = "Profit $/ton/acre") +
   theme_minimal() +
   theme(axis.title.x = element_text(size = 10))
 
@@ -297,8 +297,8 @@ meanprice_plot <- ggplot(pricemn_df, aes(x = price, y = mean_netpre)) +
   scale_x_continuous(labels=scales::dollar_format()) +
   scale_y_continuous(labels=scales::dollar_format()) +
   labs(subtitle = "C. Function of Mean Price",
-       x = "Price per ton", 
-       y = "Profit in current $") +
+       x = "Price per ton per acre", 
+       y = "Profit $/ton/acre") +
   theme_minimal() +
   theme(axis.title.x = element_text(size = 10))
 
