@@ -271,6 +271,8 @@ For variable `February average minimum temperatures`, we see much less variation
 
 For variable `price`, we see relatively small variations in profit for most years, in comparison to a wide variation in the year 1995. The fact that 1995 was an abnormally rainy year points to something about the interaction and influence of precipitation and price on the model that leads to high variation at high precipitation levels. 
 
+\newpage
+
 ### Scatter Plots
 ```{r, fig.cap="Mean Annual Profit from Almond Profit Anomaly"}
 meanTn2_plot <- ggplot(Tn2mn_df, aes(x = Tn2, y = mean_netpre)) +
@@ -291,12 +293,12 @@ meanP1_plot <- ggplot(P1mn_df, aes(x = P1, y = mean_netpre)) +
   theme(axis.title.x = element_text(size = 10))
 
 meanprice_plot <- ggplot(pricemn_df, aes(x = price, y = mean_netpre)) +
-  geom_point(color = "grey40", size = 1.2) +
+  geom_point(shape = 21, color = "grey61", fill = "navajowhite", size = 1.5) +
   scale_x_continuous(labels=scales::dollar_format()) +
   scale_y_continuous(labels=scales::dollar_format()) +
   labs(subtitle = "C. Function of Mean Price",
        x = "Price per ton", 
-       y = " ") +
+       y = "Profit in current $") +
   theme_minimal() +
   theme(axis.title.x = element_text(size = 10))
 
@@ -312,6 +314,8 @@ profit_plot2
 Because the boxplot visualizations did not answer all of our questions about the variables’ influence on the model, we plotted the average annual profit anomaly against the uniform distribution of each variable individually. From these visualizations, we found a positive linear relationship of almond price to the average annual profit anomaly, a negative, near-linear relationship of average February temperature lows, and a positive, exponential relationship of January precipitation. This provides an explanation as to why there was much more variation of profit anomaly at a higher precipitation level in 1995.
 
 
+\newpage
+
 ## 4. Output the graph as a stand alone image
 
 ```{r, eval=FALSE}
@@ -319,7 +323,6 @@ ggsave(file = "meanannualprofit.png", plot = profit_plot2,
   scale = 1, width = 6, height = 6,
   units = "in", dpi = 300)
 ```
-
 
 ## References
 
