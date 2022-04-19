@@ -290,27 +290,17 @@ meanP1_plot <- ggplot(P1mn_df, aes(x = P1, y = mean_netpre)) +
   theme_minimal() +
   theme(axis.title.x = element_text(size = 10))
 
-price_plot2 <- ggplot(price_df, 
-       aes(x = as.factor(year), y = netpre, group = year)) +
-  geom_point(shape = 21, color = "gray61", fill = "navajowhite", size = 1.2) + 
-  scale_x_discrete(breaks=seq(1989, 2010, 2)) +
-  scale_y_continuous(labels=scales::dollar_format()) +
-  labs(subtitle = "C. Function of Price",
-       x = "Year", y = "Profit in current $") +
-  theme_minimal() +
-  theme(axis.text.x = element_text(angle = 45, hjust=1, size = 10))
-
 meanprice_plot <- ggplot(pricemn_df, aes(x = price, y = mean_netpre)) +
   geom_point(color = "grey40", size = 1.2) +
   scale_x_continuous(labels=scales::dollar_format()) +
   scale_y_continuous(labels=scales::dollar_format()) +
-  labs(subtitle = "D. Function of Mean Price",
+  labs(subtitle = "C. Function of Mean Price",
        x = "Price per ton", 
        y = " ") +
   theme_minimal() +
   theme(axis.title.x = element_text(size = 10))
 
-patchwork <- (meanTn2_plot + meanP1_plot) / (price_plot2 + meanprice_plot)
+patchwork <- (meanTn2_plot + meanP1_plot) / (meanprice_plot)
 
 profit_plot2 <- patchwork + plot_annotation(
   title = "Mean Annual Profit from Almond Profit Anomaly",
